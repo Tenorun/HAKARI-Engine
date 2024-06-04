@@ -7,11 +7,12 @@ using UnityEngine.UI;
 public class DialogueBoxScript : MonoBehaviour
 {
 
-    //메시지 박스, 초상화 박스, 초상화 , 이름 박스 오브젝트
+    //메시지 박스, 초상화 박스, 초상화, 이름 박스, 줄 끝남 표시 오브젝트
     public GameObject messageBox;
     public GameObject portraitBox;
     public GameObject portrait;
     public GameObject nameBox;
+    public GameObject lineEndIndicator;
 
     // 메시지, 이름 텍스트
     public TextMeshProUGUI messageText;
@@ -28,17 +29,18 @@ public class DialogueBoxScript : MonoBehaviour
         printText,      
         getCommandType,
         getCommandVariable,
-        executeCommand,
         lineEnd,
-        dialogueEnd,
+        sleep,
         disabled
     }
 
     //현재 대사 박스 모드
     public processMode currentMode = processMode.disabled;
 
+    //기본 메시지 지연 시간
+    const float DEFAULT_DELAY_TIME = 0.05f;
     //메시지 지연 시간
-    float delayTime = 0.075f;
+    float delayTime = DEFAULT_DELAY_TIME;
     //메시지 지연 시간 카운트
     float delayCount = 0f;
 
@@ -64,61 +66,106 @@ public class DialogueBoxScript : MonoBehaviour
 
         displayedString = string.Empty;
         inputMessage = string.Empty;
+        delayTime = DEFAULT_DELAY_TIME;
         delayCount = 0f;
         portraitID = 0;
         messengerName = string.Empty;
-
+        
 
         scanPosition = 0;
         scannedChar = '\0';
         commandType = string.Empty;
         commandVariable = string.Empty;
 
+        sleepTime = 0f;
+        sleepCount = 0f;
+
+        //표시 초기화
         messageBox.SetActive(false);
         portraitBox.SetActive(false);
         nameBox.SetActive(false);
+        lineEndIndicator.SetActive(false);
     }
 
+
+    //대사 표시 업데이트
+
+    float endIndicatorVar = 0f;
     void UpdateDialogueSpaceDisplay()
     {
-        if (currentMode != processMode.disabled)
+        switch (currentMode)
         {
-            processMessage();
+            default:
+                //메시지 진행
+                processMessage();
 
-            //메시지 표시 업데이트
-            messageBox.SetActive(true);
-            messageText.text = displayedString;
+                //메시지 표시 업데이트
+                messageBox.SetActive(true);
+                messageText.text = displayedString;
 
-            //초상화 표시 업데이트
-            if (portraitID != 0)
-            {
-                portraitBox.SetActive(true);
-                //TODO: 초상화 이미지를 초상화 박스에 할당 기능 구현
-            }
-            else
-            {
+                //초상화 표시 업데이트
+                if (portraitID != 0)
+                {
+                    portraitBox.SetActive(true);
+                    //TODO: 초상화 이미지를 초상화 박스에 할당 기능 구현
+                }
+                else
+                {
+                    portraitBox.SetActive(false);
+                }
+
+                //이름 표시 업데이트
+                if (messengerName != string.Empty)
+                {
+                    nameBox.SetActive(true);
+                    nameText.text = messengerName;
+                }
+                else
+                {
+                    nameBox.SetActive(false);
+                }
+                break;
+
+            case processMode.lineEnd:
+                lineEndIndicator.SetActive(true);
+
+                //HAKARI 전용,(좌우로 움직이는 행동만이 HAKARI 전용이며, endIndicator라는 기능 자체는 다른거 만들때도 쓸 수 있다.)
+                endIndicatorVar += Time.deltaTime;
+
+                lineEndIndicator.transform.localPosition = new Vector2((-2.5f * Mathf.Cos(endIndicatorVar * 10)) + 154.5f , lineEndIndicator.transform.localPosition.y);
+                if(endIndicatorVar >= Mathf.PI * 2)
+                {
+                    endIndicatorVar = 0f;
+                }
+                //HAKARI 전용
+
+                if (Input.GetButton("Submit"))
+                {
+                    if(scanPosition < inputMessage.Length)
+                    {
+                        currentMode = processMode.printText;
+                        displayedString = string.Empty;
+                        lineEndIndicator.SetActive(false);
+                        endIndicatorVar = 0f;
+                    }
+                    else
+                    {
+                        ResetDialogueBox();
+                    }
+                }
+                break;
+
+            case processMode.disabled:
+
+                messageBox.SetActive(false);
                 portraitBox.SetActive(false);
-            }
-
-            //이름 표시 업데이트
-            if(messengerName != string.Empty)
-            {
-                nameBox.SetActive(true);
-                nameText.text = messengerName;
-            }
-            else
-            {
                 nameBox.SetActive(false);
-            }
-        }
-        else
-        {
-            messageBox.SetActive(false);
-            portraitBox.SetActive(false);
-            nameBox.SetActive(false);
+                break;
         }
     }
 
+
+    //출력할 대사 입력 받기
     public void GetInputMessage(string messageIn)
     {
         ResetDialogueBox();
@@ -162,6 +209,17 @@ public class DialogueBoxScript : MonoBehaviour
                 else
                 {
                     displayedString += scannedChar;
+
+
+                    //만약 다음 문자가 띄어쓰기면 딜레이 건너뛰기
+                    if(scanPosition < inputMessage.Length)
+                    {
+                        if (inputMessage[scanPosition] == ' ')
+                        {
+                            scanPosition++;
+                            displayedString += ' ';
+                        }
+                    }
                 }
                 break;
 
@@ -203,26 +261,91 @@ public class DialogueBoxScript : MonoBehaviour
     {
         switch(command)
         {
-            case "test":
-                Debug.Log("test");
-                currentMode = processMode.printText;
-                clearCommand();
-                break;
+            //한번에 표시하기
             case "displayAtOnce":
             case "dao":
                 displayedString += variable;
                 currentMode = processMode.printText;
                 clearCommand();
                 break;
-            case "setName":
+            
+            //대화자 이름 설정
             case "name":
                 messengerName = variable;
+                currentMode = processMode.printText;
+                clearCommand();
+                break;
+            
+            //1 글자 표시 딜레이 시간 설정 (명령 변수에 아무것도 입력하지 않을시 기본값)
+            case "delayTime":
+            case "delaytime":
+            case "dt":
+                if(variable == string.Empty)
+                {
+                    delayTime = DEFAULT_DELAY_TIME;
+                }
+                else
+                {
+                    float targetTime;
+                    if(float.TryParse(variable, out targetTime))
+                    {
+                        delayTime = targetTime;
+                    }
+                    else
+                    {
+                        delayTime = DEFAULT_DELAY_TIME;
+                        Debug.LogError($"숫자가 아닌 값,\"{variable}\"(을)를 딜레이 시간으로 설정하여 딜레이 시간을 기본값으로 설정합니다.");
+                    }
+                }
+                currentMode = processMode.printText;
+                clearCommand();
+                break;
+
+            //variable초 동안 정지
+            case "sleep":
+            case "freeze":
+            case "slp":
+            case "frz":
+                float targetFreeze;
+                if (float.TryParse(variable, out targetFreeze))
+                {
+                    currentMode = processMode.sleep;
+                    delayCount = 0f;
+                    sleepTime = targetFreeze;
+                }
+                else
+                {
+                    Debug.LogError($"숫자가 아닌 값,\"{variable}\"(을)를 정지 시간로 설정하여 정지 명령을 실행 할 수 없습니다.");
+                    currentMode = processMode.printText;
+                }
+                clearCommand();
+                break;
+
+            //대화 한 줄 끝내기
+            case "lineEnd":
+            case "lineend":
+            case "endl":
+                currentMode = processMode.lineEnd;
+                clearCommand();
+                break;
+
+            //대화 강제 종료
+            case "shutDown":
+            case "shutdown":
+            case "sd":
+                ResetDialogueBox();
+                break;
+
+            //예외 처리
+            default:
+                Debug.LogError($"{command}(은)는 없는 명령입니다.");
                 currentMode = processMode.printText;
                 clearCommand();
                 break;
         }
     }
 
+    //커맨드 초기화
     void clearCommand()
     {
         commandType = string.Empty;
@@ -234,21 +357,40 @@ public class DialogueBoxScript : MonoBehaviour
         ResetDialogueBox();
     }
 
+    //정지 시간
+    float sleepTime = 0f;
+    float sleepCount = 0f;
+
     public bool testTrigger = false;
 
     void Update()
     {
+        //테스트용
         if(testTrigger)
         {
             testTrigger = false;
-            GetInputMessage("#name(마리)안녕! 써니! #dao(누나랑 연습해야지?)#dao(누나랑 연습해야지?)#dao(누나랑 연습해야지?)#dao(누나랑 연습해야지?)#dao(누나랑 연습해야지?)#dao(누나랑 연습해야지?)#dao(누나랑 연습해야지?)#dao(누나랑 연습해야지?)");
+            GetInputMessage("#name(마리)안녕하세요, 저는 오마리AU 에서 주인공을 맡고있는 마리입니다.#endl()" +
+                "먼저, 저의 말과 행동으로 인해 큰 피해를 끼치고 실망을 드린 써니님, #slp(0.2)친구 분들께 죄송합니다. #slp(2)지금부터는");
         }
 
-        delayCount += Time.deltaTime;
-        if(delayCount >= delayTime)
+        if(currentMode != processMode.sleep)
         {
-            delayCount = 0f;
-            UpdateDialogueSpaceDisplay();
+            delayCount += Time.deltaTime;
+            if (delayCount >= delayTime || currentMode == processMode.lineEnd)
+            {
+                delayCount = 0f;
+                UpdateDialogueSpaceDisplay();
+            }
+        }
+        else
+        {
+            sleepCount += Time.deltaTime;
+            if(sleepCount >= sleepTime)
+            {
+                sleepTime = 0f;
+                sleepCount = 0f;
+                currentMode = processMode.printText;
+            }
         }
     }
 }

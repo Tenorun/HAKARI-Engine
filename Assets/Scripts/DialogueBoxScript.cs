@@ -55,9 +55,13 @@ public class DialogueBoxScript : MonoBehaviour
     string messengerName = string.Empty;
 
 
-    
 
-
+    //사운드 매니저 오브젝트
+    public GameObject SoundManager;
+    //대화 효과음 뮤트 여부
+    bool isVoiceSFXMuted = false;
+    //대화 효과음의 사운드 ID
+    int voiceSoundID = 1;
 
     void ResetDialogueBox()
     {
@@ -70,6 +74,8 @@ public class DialogueBoxScript : MonoBehaviour
         delayCount = 0f;
         portraitID = 0;
         messengerName = string.Empty;
+        isVoiceSFXMuted = false;
+        voiceSoundID = 1;
         
 
         scanPosition = 0;
@@ -210,9 +216,14 @@ public class DialogueBoxScript : MonoBehaviour
                 {
                     displayedString += scannedChar;
 
+                    //대화 소리 재생
+                    if (!isVoiceSFXMuted)
+                    {
+                        SoundManager.GetComponent<SFXManagerScript>().PlaySFX(voiceSoundID);
+                    }
 
                     //만약 다음 문자가 띄어쓰기면 딜레이 건너뛰기
-                    if(scanPosition < inputMessage.Length)
+                    if (scanPosition < inputMessage.Length)
                     {
                         if (inputMessage[scanPosition] == ' ')
                         {
@@ -259,6 +270,8 @@ public class DialogueBoxScript : MonoBehaviour
 
     void executeCommand(string command, string variable)
     {
+        bool isDefaultEndExecution = true;
+
         switch(command)
         {
             //한번에 표시하기
@@ -312,13 +325,14 @@ public class DialogueBoxScript : MonoBehaviour
                     currentMode = processMode.sleep;
                     delayCount = 0f;
                     sleepTime = targetFreeze;
+
+                    clearCommand();
+                    isDefaultEndExecution = false;
                 }
                 else
                 {
                     Debug.LogError($"숫자가 아닌 값,\"{variable}\"(을)를 정지 시간로 설정하여 정지 명령을 실행 할 수 없습니다.");
-                    currentMode = processMode.printText;
                 }
-                clearCommand();
                 break;
 
             //대화 한 줄 끝내기
@@ -327,6 +341,7 @@ public class DialogueBoxScript : MonoBehaviour
             case "endl":
                 currentMode = processMode.lineEnd;
                 clearCommand();
+                isDefaultEndExecution = false;
                 break;
 
             //대화 강제 종료
@@ -334,14 +349,47 @@ public class DialogueBoxScript : MonoBehaviour
             case "shutdown":
             case "sd":
                 ResetDialogueBox();
+                isDefaultEndExecution = false;
+                break;
+            
+            //대화 효과음 음소거
+            case "mute":
+                isVoiceSFXMuted = true;
+                break;
+
+            //대화 효과음 음소거 해제
+            case "unmute":
+                isVoiceSFXMuted = false;
+                break;
+
+            case "playSound":
+            case "playsound":
+            case "sound":
+            case "sfx":
+                int soundID;
+                if (int.TryParse(variable, out soundID))
+                {
+                    SoundManager.GetComponent<SFXManagerScript>().PlaySFX(soundID);
+                }
+                else
+                {
+                    Debug.LogError($"숫자가 아닌 값,\"{variable}\"(을)를 SoundID로 설정하여 효과음을 재생 할 수 없습니다.");
+                }
                 break;
 
             //예외 처리
             default:
                 Debug.LogError($"{command}(은)는 없는 명령입니다.");
-                currentMode = processMode.printText;
-                clearCommand();
                 break;
+
+
+        }
+
+        //명령어 실행 끝내기 기본
+        if (isDefaultEndExecution)
+        {
+            currentMode = processMode.printText;
+            clearCommand();
         }
     }
 

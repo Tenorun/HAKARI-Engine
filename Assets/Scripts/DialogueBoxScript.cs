@@ -288,6 +288,11 @@ public class DialogueBoxScript : MonoBehaviour
                 currentMode = processMode.printText;
                 clearCommand();
                 break;
+
+            //대화자 사진 설정
+            case "portrait":
+            case "pfp":
+
             
             //1 글자 표시 딜레이 시간 설정 (명령 변수에 아무것도 입력하지 않을시 기본값)
             case "delayTime":
@@ -307,7 +312,7 @@ public class DialogueBoxScript : MonoBehaviour
                     else
                     {
                         delayTime = DEFAULT_DELAY_TIME;
-                        Debug.LogError($"숫자가 아닌 값,\"{variable}\"(을)를 딜레이 시간으로 설정하여 딜레이 시간을 기본값으로 설정합니다.");
+                        Debug.LogWarning($"숫자가 아닌 값,\"{variable}\"(을)를 딜레이 시간으로 설정하여 딜레이 시간을 기본값으로 설정합니다.");
                     }
                 }
                 currentMode = processMode.printText;
@@ -331,9 +336,36 @@ public class DialogueBoxScript : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError($"숫자가 아닌 값,\"{variable}\"(을)를 정지 시간로 설정하여 정지 명령을 실행 할 수 없습니다.");
+                    Debug.LogWarning($"숫자가 아닌 값,\"{variable}\"(을)를 정지 시간로 설정하여 정지 명령을 실행 할 수 없습니다.");
                 }
                 break;
+            
+            //효과음 재생
+            case "playSound":
+            case "playsound":
+            case "sound":
+            case "sfx":
+                int soundID;
+                if (int.TryParse(variable, out soundID))
+                {
+                    SoundManager.GetComponent<SFXManagerScript>().PlaySFX(soundID);
+                }
+                else
+                {
+                    Debug.LogWarning($"숫자가 아닌 값,\"{variable}\"(을)를 SoundID로 설정하여 효과음을 재생 할 수 없습니다.");
+                }
+                break;
+
+            //대화 효과음 음소거
+            case "mute":
+                isVoiceSFXMuted = true;
+                break;
+
+            //대화 효과음 음소거 해제
+            case "unmute":
+                isVoiceSFXMuted = false;
+                break;
+
 
             //대화 한 줄 끝내기
             case "lineEnd":
@@ -351,37 +383,11 @@ public class DialogueBoxScript : MonoBehaviour
                 ResetDialogueBox();
                 isDefaultEndExecution = false;
                 break;
-            
-            //대화 효과음 음소거
-            case "mute":
-                isVoiceSFXMuted = true;
-                break;
-
-            //대화 효과음 음소거 해제
-            case "unmute":
-                isVoiceSFXMuted = false;
-                break;
-
-            case "playSound":
-            case "playsound":
-            case "sound":
-            case "sfx":
-                int soundID;
-                if (int.TryParse(variable, out soundID))
-                {
-                    SoundManager.GetComponent<SFXManagerScript>().PlaySFX(soundID);
-                }
-                else
-                {
-                    Debug.LogError($"숫자가 아닌 값,\"{variable}\"(을)를 SoundID로 설정하여 효과음을 재생 할 수 없습니다.");
-                }
-                break;
 
             //예외 처리
             default:
-                Debug.LogError($"{command}(은)는 없는 명령입니다.");
+                Debug.LogWarning($"{command}(은)는 없는 명령입니다.");
                 break;
-
 
         }
 

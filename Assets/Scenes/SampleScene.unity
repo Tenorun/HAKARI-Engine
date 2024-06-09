@@ -583,11 +583,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC548\uB155\uD558\uC138\uC694 \uC800\uB294 \uD558\uCE74\uB9AC AU\uC5D0\uC11C
-    \uC8FC\uC778\uACF5\uC744 \uB9E1\uACE0\uC788\uB294 \uB9C8\uB9AC\uC785\uB2C8\uB2E4.
-    \uBA3C\uC800, \uC800\uC758 \uB9D0\uACFC, \uD589\uB3D9\uC73C\uB85C \uC778\uD574
-    \uD070 \uD53C\uD574\uB97C \uB07C\uCE58\uACE0 \uC2E4\uB9DD\uC744 \uB4DC\uB9B0
-    \uC368\uB2C8\uB2D8\uAED8, \uC8C4\uC1A1\uD569\uB2C8\uB2E4."
+  m_text: "TestTest\n\uB2E4\uB78C\uC950 \uD5CC \uCCC7\uBC14\uD034 \uD0C0\uACE0\uD30C\nHello
+    World!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8bebcc35b4fe076498761945102ace23, type: 2}
   m_sharedMaterial: {fileID: 4536414462140173077, guid: 8bebcc35b4fe076498761945102ace23, type: 2}
@@ -1375,7 +1372,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -253124285, guid: bf79d3d3efb90e44b99b07c5d7204267, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

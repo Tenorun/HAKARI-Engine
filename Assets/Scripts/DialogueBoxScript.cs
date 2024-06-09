@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.IO;
 
 public class DialogueBoxScript : MonoBehaviour
 {
@@ -10,17 +11,13 @@ public class DialogueBoxScript : MonoBehaviour
     //메시지 박스, 초상화 박스, 초상화, 이름 박스, 줄 끝남 표시 오브젝트
     public GameObject messageBox;
     public GameObject portraitBox;
-    public GameObject portrait;
+    public Image portrait;
     public GameObject nameBox;
     public GameObject lineEndIndicator;
 
     // 메시지, 이름 텍스트
     public TextMeshProUGUI messageText;
     public TextMeshProUGUI nameText;
-
-    //초상화 이미지
-    public string relativeFolderPath;   //데이터 폴더의 상대 경로
-    public Sprite[] imageArray;         //이미지를 저장할 배열
 
 
     //대사 박스 모드 종류
@@ -93,6 +90,13 @@ public class DialogueBoxScript : MonoBehaviour
         lineEndIndicator.SetActive(false);
     }
 
+    Texture2D LoadTextureFromFile(string filePath)
+    {
+        byte[] fileData = File.ReadAllBytes(filePath);
+        Texture2D texture = new Texture2D(2, 2);
+        texture.LoadImage(fileData); // 파일 데이터로부터 텍스처 로드
+        return texture;
+    }
 
     //대사 표시 업데이트
 
@@ -278,21 +282,18 @@ public class DialogueBoxScript : MonoBehaviour
             case "displayAtOnce":
             case "dao":
                 displayedString += variable;
-                currentMode = processMode.printText;
-                clearCommand();
                 break;
             
             //대화자 이름 설정
             case "name":
                 messengerName = variable;
-                currentMode = processMode.printText;
-                clearCommand();
                 break;
 
             //대화자 사진 설정
             case "portrait":
             case "pfp":
-
+                
+                break;
             
             //1 글자 표시 딜레이 시간 설정 (명령 변수에 아무것도 입력하지 않을시 기본값)
             case "delayTime":
@@ -315,8 +316,6 @@ public class DialogueBoxScript : MonoBehaviour
                         Debug.LogWarning($"숫자가 아닌 값,\"{variable}\"(을)를 딜레이 시간으로 설정하여 딜레이 시간을 기본값으로 설정합니다.");
                     }
                 }
-                currentMode = processMode.printText;
-                clearCommand();
                 break;
 
             //variable초 동안 정지
@@ -408,6 +407,7 @@ public class DialogueBoxScript : MonoBehaviour
 
     void Start()
     {
+        portrait.GetComponent<Image>();
         ResetDialogueBox();
     }
 
@@ -423,7 +423,7 @@ public class DialogueBoxScript : MonoBehaviour
         if(testTrigger)
         {
             testTrigger = false;
-            GetInputMessage("#name(마리)안녕하세요, 저는 오마리AU 에서 주인공을 맡고있는 마리입니다.#endl()" +
+            GetInputMessage("#pfp(1)#name(마리)안녕하세요, 저는 오마리AU 에서 주인공을 맡고있는 #pfp(0)마리입니다.#endl()" +
                 "먼저, 저의 말과 행동으로 인해 큰 피해를 끼치고 실망을 드린 써니님, #slp(0.2)친구 분들께 죄송합니다. #slp(2)지금부터는");
         }
 

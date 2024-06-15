@@ -77,6 +77,7 @@ public class PortraitManager : MonoBehaviour
                 string[] imagePaths = Directory.GetFiles(path, "*.png"); // 폴더 내의 모든 PNG 파일 이름 가져오기
 
                 //할당 위치 구하기
+
             }
         }
     }

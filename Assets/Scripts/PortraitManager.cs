@@ -74,9 +74,24 @@ public class PortraitManager : MonoBehaviour
                 //폴더 내 이미지들을 가져와서 imageArray에 imageArray[캐릭터 번호][표정 번호]위치에 할당하는 스크립트 작성
                 string path = mainFolderPath + '\\' + charFolderNames[i];
 
-                string[] imagePaths = Directory.GetFiles(path, "*.png"); // 폴더 내의 모든 PNG 파일 이름 가져오기
+                string[] ImagePaths = Directory.GetFiles(path, "*.png"); // 폴더 내의 모든 PNG 파일 이름 가져오기
+                string[] imageNames = new string[ImagePaths.Length];     // 폴더 내의 이미지 이름들
 
-                //할당 위치 구하기
+                //할당하기
+                for (int o = 0; o < ImagePaths.Length; o++)
+                {
+                    int assignLocation = Int32.Parse(Path.GetFileNameWithoutExtension(ImagePaths[o]).Split('-')[0]);
+
+                    //이미지 로드
+                    Texture2D texture = LoadTextureFromFile(ImagePaths[o]);
+                    if(texture != null)
+                    {
+                        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f, 100, 0, SpriteMeshType.FullRect, new Vector4(0, 0, texture.width, texture.height), false);
+                        sprite.texture.filterMode = FilterMode.Point; // FilterMode를 None으로 설정
+
+                        imageArray[i,assignLocation] = sprite;
+                    }
+                }
 
             }
         }

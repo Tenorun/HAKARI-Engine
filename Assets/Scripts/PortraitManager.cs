@@ -14,6 +14,7 @@ public class PortraitManager : MonoBehaviour
 
     //폴더 이름 앞 번호로 배열의 위치에 할당된 폴더 이름들 
     [SerializeField] private string[] charFolderNames;
+
     //이미지 배열
     public Sprite[,] imageArray;
 
@@ -56,6 +57,7 @@ public class PortraitManager : MonoBehaviour
             if (int.TryParse(splitName[0], out charPortraitID))
             {
                 charFolderNames[charPortraitID] = folderName;
+
             }
             else
             {
@@ -105,15 +107,14 @@ public class PortraitManager : MonoBehaviour
         return texture;
     }
 
+    Sprite TempleteLoad(string name, string emotion)
+    {
+        return imageArray[0, 1];
+    }
+
     void Start()
     {
         LoadFolders();
         LoadImages();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

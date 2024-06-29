@@ -9,21 +9,30 @@ public class DialogueBoxScript : MonoBehaviour
 {
 
     //메시지 박스, 초상화 박스, 초상화, 이름 박스, 줄 끝남 표시 오브젝트
+    //"Message Box"
     public GameObject messageBox;
+    //"Portrait Box"
     public GameObject portraitBox;
+    //"Portrait Image"
     public Image portrait;
+    //"Name Box"
     public GameObject nameBox;
+    //"Line End Indicator"
     public GameObject lineEndIndicator;
 
     // 메시지, 이름 텍스트
     public TextMeshProUGUI messageText;
     public TextMeshProUGUI nameText;
 
+    //매니저들
+    public GameObject gameManager;
+    public GameObject sfxManager;
+    public GameObject portraitImageManager;
 
     //대사 박스 모드 종류
     public enum processMode
     {
-        printText,      
+        printText,
         getCommandType,
         getCommandVariable,
         lineEnd,
@@ -46,19 +55,16 @@ public class DialogueBoxScript : MonoBehaviour
     //표시기에 표시되는 메시지
     public string displayedString;
 
-    //초상화 표시 사진 ID  (0: 비활성화)
-    int portraitID = 0;
     //메시지 보내는 인물의 이름   (비어있음: 이름 없음, 비활성화)
     string messengerName = string.Empty;
 
-
-
-    //사운드 매니저 오브젝트
-    public GameObject SoundManager;
     //대화 효과음 뮤트 여부
     bool isVoiceSFXMuted = false;
     //대화 효과음의 사운드 ID
     int voiceSoundID = 1;
+
+    // 초상화 상자의 활성화 상태를 유지하기 위한 변수
+    bool isPortraitBoxActive = false;
 
     void ResetDialogueBox()
     {
@@ -69,11 +75,9 @@ public class DialogueBoxScript : MonoBehaviour
         inputMessage = string.Empty;
         delayTime = DEFAULT_DELAY_TIME;
         delayCount = 0f;
-        portraitID = 0;
         messengerName = string.Empty;
         isVoiceSFXMuted = false;
         voiceSoundID = 1;
-        
 
         scanPosition = 0;
         scannedChar = '\0';
@@ -85,9 +89,11 @@ public class DialogueBoxScript : MonoBehaviour
 
         //표시 초기화
         messageBox.SetActive(false);
-        portraitBox.SetActive(false);
         nameBox.SetActive(false);
         lineEndIndicator.SetActive(false);
+
+        // 초상화 상자의 활성화 상태 복원
+        portraitBox.SetActive(isPortraitBoxActive);
     }
 
     Texture2D LoadTextureFromFile(string filePath)
@@ -113,17 +119,6 @@ public class DialogueBoxScript : MonoBehaviour
                 messageBox.SetActive(true);
                 messageText.text = displayedString;
 
-                //초상화 표시 업데이트
-                if (portraitID != 0)
-                {
-                    portraitBox.SetActive(true);
-                    //TODO: 초상화 이미지를 초상화 박스에 할당 기능 구현
-                }
-                else
-                {
-                    portraitBox.SetActive(false);
-                }
-
                 //이름 표시 업데이트
                 if (messengerName != string.Empty)
                 {
@@ -142,8 +137,8 @@ public class DialogueBoxScript : MonoBehaviour
                 //HAKARI 전용,(좌우로 움직이는 행동만이 HAKARI 전용이며, endIndicator라는 기능 자체는 다른거 만들때도 쓸 수 있다.)
                 endIndicatorVar += Time.deltaTime;
 
-                lineEndIndicator.transform.localPosition = new Vector2((-2.5f * Mathf.Cos(endIndicatorVar * 10)) + 154.5f , lineEndIndicator.transform.localPosition.y);
-                if(endIndicatorVar >= Mathf.PI * 2)
+                lineEndIndicator.transform.localPosition = new Vector2((-2.5f * Mathf.Cos(endIndicatorVar * 10)) + 154.5f, lineEndIndicator.transform.localPosition.y);
+                if (endIndicatorVar >= Mathf.PI * 2)
                 {
                     endIndicatorVar = 0f;
                 }
@@ -151,7 +146,7 @@ public class DialogueBoxScript : MonoBehaviour
 
                 if (Input.GetButton("Submit"))
                 {
-                    if(scanPosition < inputMessage.Length)
+                    if (scanPosition < inputMessage.Length)
                     {
                         currentMode = processMode.printText;
                         displayedString = string.Empty;
@@ -160,7 +155,9 @@ public class DialogueBoxScript : MonoBehaviour
                     }
                     else
                     {
+                        bool isPfpActive = portraitBox.activeSelf;
                         ResetDialogueBox();
+                        portraitBox.SetActive(isPfpActive);
                     }
                 }
                 break;
@@ -173,7 +170,6 @@ public class DialogueBoxScript : MonoBehaviour
                 break;
         }
     }
-
 
     //출력할 대사 입력 받기
     public void GetInputMessage(string messageIn)
@@ -194,7 +190,7 @@ public class DialogueBoxScript : MonoBehaviour
     void processMessage()
     {
         //글자 스캔하기
-        if(scanPosition < inputMessage.Length)
+        if (scanPosition < inputMessage.Length)
         {
             scannedChar = inputMessage[scanPosition++];
         }
@@ -203,14 +199,13 @@ public class DialogueBoxScript : MonoBehaviour
             currentMode = processMode.lineEnd;
         }
 
-
         switch (currentMode)
         {
             //메시지 출력 모드
             case processMode.printText:
 
                 //만약 스캔된 글자가 명령어의 시작인 '#' 이라면 명령어 입력 모드로 전환
-                if(scannedChar == '#')
+                if (scannedChar == '#')
                 {
                     currentMode = processMode.getCommandType;
                     processMessage();
@@ -223,7 +218,7 @@ public class DialogueBoxScript : MonoBehaviour
                     //대화 소리 재생
                     if (!isVoiceSFXMuted)
                     {
-                        SoundManager.GetComponent<SFXManagerScript>().PlaySFX(voiceSoundID);
+                        sfxManager.GetComponent<SFXManagerScript>().PlaySFX(voiceSoundID);
                     }
 
                     //만약 다음 문자가 띄어쓰기면 딜레이 건너뛰기
@@ -276,14 +271,14 @@ public class DialogueBoxScript : MonoBehaviour
     {
         bool isDefaultEndExecution = true;
 
-        switch(command)
+        switch (command)
         {
             //한번에 표시하기
             case "displayAtOnce":
             case "dao":
                 displayedString += variable;
                 break;
-            
+
             //대화자 이름 설정
             case "name":
                 messengerName = variable;
@@ -292,21 +287,49 @@ public class DialogueBoxScript : MonoBehaviour
             //대화자 사진 설정
             case "portrait":
             case "pfp":
-                
+                //0 이면 초기화
+                if (variable == "0")
+                {
+                    isPortraitBoxActive = false;
+                    portraitBox.SetActive(false);
+                    break;
+                }
+
+                //명령어 변수를 이미지 ID로 변환
+                string[] splitVariable = variable.Split(',');
+                int[] imageID = new int[2];
+
+                //옳지 않은 형식일시 예외처리
+                if (!int.TryParse(splitVariable[0], out imageID[0]))
+                {
+                    Debug.LogWarning($"초상화 설정 명령의 변수가 올바르지 않습니다: {variable}");
+                    portraitBox.SetActive(false);
+                    break;
+                }
+                if (!int.TryParse(splitVariable[1], out imageID[1]))
+                {
+                    Debug.LogWarning($"초상화 설정 명령의 변수가 올바르지 않습니다: {variable}");
+                    portraitBox.SetActive(false);
+                    break;
+                }
+
+                isPortraitBoxActive = true;
+                portraitBox.SetActive(true);
+                portrait.sprite = portraitImageManager.GetComponent<PortraitManager>().imageArray[imageID[0], imageID[1]];
                 break;
-            
+
             //1 글자 표시 딜레이 시간 설정 (명령 변수에 아무것도 입력하지 않을시 기본값)
             case "delayTime":
             case "delaytime":
             case "dt":
-                if(variable == string.Empty)
+                if (variable == string.Empty)
                 {
                     delayTime = DEFAULT_DELAY_TIME;
                 }
                 else
                 {
                     float targetTime;
-                    if(float.TryParse(variable, out targetTime))
+                    if (float.TryParse(variable, out targetTime))
                     {
                         delayTime = targetTime;
                     }
@@ -338,7 +361,7 @@ public class DialogueBoxScript : MonoBehaviour
                     Debug.LogWarning($"숫자가 아닌 값,\"{variable}\"(을)를 정지 시간로 설정하여 정지 명령을 실행 할 수 없습니다.");
                 }
                 break;
-            
+
             //효과음 재생
             case "playSound":
             case "playsound":
@@ -347,7 +370,7 @@ public class DialogueBoxScript : MonoBehaviour
                 int soundID;
                 if (int.TryParse(variable, out soundID))
                 {
-                    SoundManager.GetComponent<SFXManagerScript>().PlaySFX(soundID);
+                    sfxManager.GetComponent<SFXManagerScript>().PlaySFX(soundID);
                 }
                 else
                 {
@@ -364,7 +387,6 @@ public class DialogueBoxScript : MonoBehaviour
             case "unmute":
                 isVoiceSFXMuted = false;
                 break;
-
 
             //대화 한 줄 끝내기
             case "lineEnd":
@@ -387,7 +409,6 @@ public class DialogueBoxScript : MonoBehaviour
             default:
                 Debug.LogWarning($"{command}(은)는 없는 명령입니다.");
                 break;
-
         }
 
         //명령어 실행 끝내기 기본
@@ -405,6 +426,28 @@ public class DialogueBoxScript : MonoBehaviour
         commandVariable = string.Empty;
     }
 
+    private void Awake()
+    {
+        //매니저 오브젝트 할당
+        gameManager = GameObject.Find("Game Manager");
+        sfxManager = gameManager.transform.Find("SFX Manager").gameObject;
+        portraitImageManager = gameManager.transform.Find("Portrait Image Manager").gameObject;
+
+        //자식 오브젝트(대화창 구성 요소) 할당
+        //자식 1세대
+        messageBox = transform.Find("Message Box").gameObject;
+        portraitBox = transform.Find("Portrait Box").gameObject;
+
+        //자식 2세대
+        portrait = portraitBox.transform.Find("Portrait Image").GetComponent<Image>();
+        nameBox = messageBox.transform.Find("Name Box").gameObject;
+        lineEndIndicator = messageBox.transform.Find("Line End Indicator").gameObject;
+        messageText = messageBox.transform.Find("Message Text").GetComponent<TextMeshProUGUI>();
+
+        //자식 3세대
+        nameText = nameBox.transform.Find("Name Text").GetComponent<TextMeshProUGUI>();
+    }
+
     void Start()
     {
         portrait.GetComponent<Image>();
@@ -420,14 +463,14 @@ public class DialogueBoxScript : MonoBehaviour
     void Update()
     {
         //테스트용
-        if(testTrigger)
+        if (testTrigger)
         {
             testTrigger = false;
-            GetInputMessage("#pfp(1)#name(마리)안녕하세요, 저는 오마리AU 에서 주인공을 맡고있는 #pfp(0)마리입니다.#endl()" +
-                "먼저, 저의 말과 행동으로 인해 큰 피해를 끼치고 실망을 드린 써니님, #slp(0.2)친구 분들께 죄송합니다. #slp(2)지금부터는");
+            GetInputMessage("#pfp(0,1)#name(마리)안녕하세요, 저는 오마리AU 에서 주인공을 맡고있는 써니 누나, 마리입니다.#endl()" +
+                "먼저, 저의 말과 행동으로 인해 큰 피해를 끼치고 실망을 드린 써니님, #slp(0.2)친구 분들께 죄송합니다. #slp(1)지금부터는");
         }
 
-        if(currentMode != processMode.sleep)
+        if (currentMode != processMode.sleep)
         {
             delayCount += Time.deltaTime;
             if (delayCount >= delayTime || currentMode == processMode.lineEnd)
@@ -439,7 +482,7 @@ public class DialogueBoxScript : MonoBehaviour
         else
         {
             sleepCount += Time.deltaTime;
-            if(sleepCount >= sleepTime)
+            if (sleepCount >= sleepTime)
             {
                 sleepTime = 0f;
                 sleepCount = 0f;

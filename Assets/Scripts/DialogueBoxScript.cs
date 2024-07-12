@@ -7,6 +7,8 @@ using System.IO;
 
 public class DialogueBoxScript : MonoBehaviour
 {
+    //인스턴스
+    public static DialogueBoxScript instance;
 
     //메시지 박스, 초상화 박스, 초상화, 이름 박스, 줄 끝남 표시 오브젝트
     //"Message Box"
@@ -428,6 +430,11 @@ public class DialogueBoxScript : MonoBehaviour
 
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+
         //매니저 오브젝트 할당
         gameManager = GameObject.Find("Game Manager");
         sfxManager = gameManager.transform.Find("SFX Manager").gameObject;

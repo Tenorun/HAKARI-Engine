@@ -642,6 +642,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 0
+  anim: {fileID: 0}
   stareAngle: 0
   isMoving: 0
   LockPlayerControl: 0
@@ -654,6 +655,52 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3662167280883115560, guid: 1fef273f3f68fae48a10581185682afe, type: 3}
   m_PrefabInstance: {fileID: 432701733378006155}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1100058235
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1100058237}
+  - component: {fileID: 1100058236}
+  m_Layer: 0
+  m_Name: NPCmovePoint1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1100058236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100058235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 441fec0ed9735ad45bc514c397d74126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  gizmoSize: 0.2
+--- !u!4 &1100058237
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100058235}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -4.15, y: 0.93999994, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1192209628
 GameObject:
   m_ObjectHideFlags: 0
@@ -810,7 +857,7 @@ Transform:
   m_GameObject: {fileID: 1215681879}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.9598615, y: -0.52642167, z: 0}
+  m_LocalPosition: {x: 4.91, y: -1.14, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -873,7 +920,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4905e8009ed85bc4788b4afb821454f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerObject: {fileID: 0}
+  currentMode: 0
+  targetPosition:
+  - {fileID: 1100058237}
+  - {fileID: 1542308022}
+  moveSpeed: 2
 --- !u!50 &1215681885
 Rigidbody2D:
   serializedVersion: 4
@@ -952,6 +1003,52 @@ MonoBehaviour:
   relativeFolderPath: Images\Character Portraits
   mainFolderPath: 
   charFolderNames: []
+--- !u!1 &1542308020
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1542308022}
+  - component: {fileID: 1542308021}
+  m_Layer: 0
+  m_Name: NPCmovePoint2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1542308021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1542308020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 441fec0ed9735ad45bc514c397d74126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  gizmoSize: 0.2
+--- !u!4 &1542308022
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1542308020}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.92, y: 3.1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2093200935
 GameObject:
   m_ObjectHideFlags: 0
@@ -1106,3 +1203,5 @@ SceneRoots:
   - {fileID: 196118283}
   - {fileID: 2093200936}
   - {fileID: 1215681881}
+  - {fileID: 1100058237}
+  - {fileID: 1542308022}

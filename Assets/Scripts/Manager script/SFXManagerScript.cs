@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class SFXManagerScript : MonoBehaviour
 {
+    //인스턴스
+    public static SFXManagerScript instance;
+
     // Sound effects folder
     public string relativeFolderPath; // Relative path to the folder
     public AudioClip[] sfxArray; // Array to store sound effects
@@ -156,6 +159,15 @@ public class SFXManagerScript : MonoBehaviour
 
         // Destroy the GameObject
         Destroy(audioSource.gameObject);
+    }
+
+    private void Awake()
+    {
+        //인스턴스 설정
+        if(instance == null)
+        {
+            instance = this;
+        }
     }
 
     // Start is called before the first frame update

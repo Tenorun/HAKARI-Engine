@@ -6,6 +6,10 @@ using UnityEngine;
 
 public class PortraitManager : MonoBehaviour
 {
+    //인스턴스
+    public static PortraitManager instance;
+
+
     //초상화 메인 폴더 상대경로
     public string relativeFolderPath = string.Empty;
     //초상화 메인 폴더 절대경로
@@ -112,6 +116,15 @@ public class PortraitManager : MonoBehaviour
         return imageArray[0, 1];
     }
 
+
+    void Awake()
+    {
+        //인스턴스 설정
+        if(instance == null)
+        {
+            instance = this;
+        }
+    }
     void Start()
     {
         LoadFolders();

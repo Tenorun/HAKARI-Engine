@@ -26,11 +26,6 @@ public class DialogueBoxScript : MonoBehaviour
     public TextMeshProUGUI messageText;
     public TextMeshProUGUI nameText;
 
-    //매니저들
-    public GameObject gameManager;
-    public GameObject sfxManager;
-    public GameObject portraitImageManager;
-
     //대사 박스 모드 종류
     public enum processMode
     {
@@ -95,6 +90,7 @@ public class DialogueBoxScript : MonoBehaviour
         lineEndIndicator.SetActive(false);
 
         // 초상화 상자의 활성화 상태 복원
+        isPortraitBoxActive = false;
         portraitBox.SetActive(isPortraitBoxActive);
     }
 
@@ -220,7 +216,7 @@ public class DialogueBoxScript : MonoBehaviour
                     //대화 소리 재생
                     if (!isVoiceSFXMuted)
                     {
-                        sfxManager.GetComponent<SFXManagerScript>().PlaySFX(voiceSoundID);
+                        SFXManagerScript.instance.PlaySFX(voiceSoundID);
                     }
 
                     //만약 다음 문자가 띄어쓰기면 딜레이 건너뛰기
@@ -317,7 +313,7 @@ public class DialogueBoxScript : MonoBehaviour
 
                 isPortraitBoxActive = true;
                 portraitBox.SetActive(true);
-                portrait.sprite = portraitImageManager.GetComponent<PortraitManager>().imageArray[imageID[0], imageID[1]];
+                portrait.sprite = PortraitManager.instance.imageArray[imageID[0], imageID[1]];
                 break;
 
             //1 글자 표시 딜레이 시간 설정 (명령 변수에 아무것도 입력하지 않을시 기본값)
@@ -372,7 +368,7 @@ public class DialogueBoxScript : MonoBehaviour
                 int soundID;
                 if (int.TryParse(variable, out soundID))
                 {
-                    sfxManager.GetComponent<SFXManagerScript>().PlaySFX(soundID);
+                    SFXManagerScript.instance.PlaySFX(soundID);
                 }
                 else
                 {
@@ -435,10 +431,6 @@ public class DialogueBoxScript : MonoBehaviour
             instance = this;
         }
 
-        //매니저 오브젝트 할당
-        gameManager = GameObject.Find("Game Manager");
-        sfxManager = gameManager.transform.Find("SFX Manager").gameObject;
-        portraitImageManager = gameManager.transform.Find("Portrait Image Manager").gameObject;
 
         //자식 오브젝트(대화창 구성 요소) 할당
         //자식 1세대

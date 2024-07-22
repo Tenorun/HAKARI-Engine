@@ -14,7 +14,7 @@ public class PlayerControl : MonoBehaviour
     private Rigidbody2D rb; // Reference to the Rigidbody2D component
     private Vector2 movement; // Variable to store movement direction
 
-    private Animator anim;
+    public Animator anim;
     public float stareAngle = -90f;    //플레이어가 바라보는 각도(일반적으로 컨트롤의 방향의 각도다.)
     public bool isMoving;       //플레이어 움직임 여부
 

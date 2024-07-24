@@ -49,7 +49,7 @@ public class NPCScriptTemplate : MonoBehaviour
         currentMode = processMode.idle;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         switch (currentMode)
         {

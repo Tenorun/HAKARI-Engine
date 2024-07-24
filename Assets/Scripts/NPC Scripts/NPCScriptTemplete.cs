@@ -1,31 +1,41 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.Transactions;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
-public class NPCScriptTemplete : MonoBehaviour
+public class NPCScriptTemplate : MonoBehaviour
 {
     private Collider2D npcCollider;
+    public Animator anim;
 
-    //시퀀스 번호(기본값: 0)
+    public float stareAngle = -90f;
+    public bool isWalking = false;
+
+    public bool handleDefaultWalkAnim = true;
+
+
+    // 시퀀스 번호(기본값: 0)
     int sequenceNum = 0;
-    //시퀀스 지속 여부(기본값: true)
+    // 시퀀스 지속 여부(기본값: true)
     bool progressSequence = true;
 
     public enum processMode
     {
         idle,
         say,
-        move
+        move,
+        sleep
     }
 
-    public processMode currentMode; //현재 모드
+    public processMode currentMode; // 현재 모드
 
-    private bool doIdleAct = true;  //idleAct 실행 여부
+    private bool doIdleAct = true;  // idleAct 실행 여부
 
     public Transform[] targetPosition; // 이동할 목표 위치를 나타내는 Transform
 
-    public float moveSpeed = 2.0f; // 이동 속도
+    private float moveSpeed = 3.0f; // 이동 속도
 
     [SerializeField] bool isMoving = false; // 이동 중인지 여부
 
@@ -39,7 +49,7 @@ public class NPCScriptTemplete : MonoBehaviour
         currentMode = processMode.idle;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         switch (currentMode)
         {
@@ -85,35 +95,64 @@ public class NPCScriptTemplete : MonoBehaviour
                     }
                 }
                 break;
+            case processMode.sleep:
+                // Do nothing while sleeping
+                break;
+        }
+
+
+
+        //기본 걷기 애니메이션 업데이트
+        if (handleDefaultWalkAnim)
+        {
+            anim.SetBool("is Moving", isWalking);
+            anim.SetFloat("Stare Angle", stareAngle + 0.000001f);
         }
     }
 
 
-    //기본상태의 행동(ex: 경로를 따라 움직임)
-    [SerializeField] int idleSequenceNum = 0;            //대기 상태 시퀀스 번호
-    [SerializeField] bool progressIdleSequence = true;   //시퀀스 넘어감 신호
+    // 기본상태의 행동(ex: 경로를 따라 움직임)
+    [SerializeField] int idleSequenceNum = 0;            // 대기 상태 시퀀스 번호
+    [SerializeField] bool progressIdleSequence = true;   // 시퀀스 넘어감 신호
 
     processMode idleCurrentMode = processMode.idle;
     void idleAct()
     {
         if (progressIdleSequence)
         {
-            //시퀀스 진행
+            progressIdleSequence = false;
+            // 시퀀스 진행
             switch (idleSequenceNum)
             {
                 case 0:
                     idleSequenceNum++;
-                    progressIdleSequence = false;
                     idleCurrentMode = processMode.move;
-                    MoveToTarget(targetPosition[0]);
-                    Debug.Log("나는!");
+                    WalkToTarget(targetPosition[0], false);
                     break;
                 case 1:
-                    idleSequenceNum = 0;
-                    progressIdleSequence = false;
+                    idleSequenceNum++;
                     idleCurrentMode = processMode.move;
-                    MoveToTarget(targetPosition[1]);
-                    Debug.Log("섹시가이.");
+                    WalkToTarget(targetPosition[1], false);
+                    break;
+                case 2:
+                    idleSequenceNum++;
+                    idleCurrentMode = processMode.move;
+                    WalkToTarget(targetPosition[2], false);
+                    break;
+                case 3:
+                    idleSequenceNum++;
+                    isWalking = false;
+                    StartCoroutine(Sleep(0.2f, true));
+                    break;
+                case 4:
+                    idleSequenceNum++;
+                    stareAngle = -90f;
+                    StartCoroutine(Sleep(0.8f, true));
+                    break;
+                case 5:
+                    idleSequenceNum = 0;
+                    idleCurrentMode = processMode.move;
+                    WalkToTarget(targetPosition[3], false);
                     break;
                 default:
                     idleSequenceNum = 0;
@@ -132,11 +171,14 @@ public class NPCScriptTemplete : MonoBehaviour
                         progressIdleSequence = true;
                     }
                     break;
+                case processMode.sleep:
+                    //do nothing while sleeping
+                    break;
             }
         }
     }
 
-    //언어별 행동 실행
+    // 언어별 행동 실행
     void ExecuteLocalizedAction()
     {
         if (moveCoroutine != null)
@@ -160,7 +202,7 @@ public class NPCScriptTemplete : MonoBehaviour
         }
     }
 
-    //영어 행동
+    // 영어 행동
     void EnglishAct()
     {
         doIdleAct = false;
@@ -172,8 +214,8 @@ public class NPCScriptTemplete : MonoBehaviour
             case 0:
                 Say("Hello.#endl()" +
                     "I'm Mari playing as lead role and Sunny's sister OMARI AU. #endl()" +
-                    "First of all, to Sunny and his firends, because of my words and actions that caused critical damage, I apologize.#endl()" +
-                    "from now on");
+                    "First of all, to Sunny and his friends, because of my words and actions that caused critical damage, I apologize.#endl()" +
+                    "from now on", true);
                 sequenceNum++;
                 break;
             case 1:
@@ -181,16 +223,26 @@ public class NPCScriptTemplete : MonoBehaviour
                 sequenceNum++;
                 break;
             case 2:
-                MoveToTarget(targetPosition[1]);
-                sequenceNum = 0;
-                CutSequence();
+                WalkToTarget(targetPosition[1], true);
+                sequenceNum++;
+                break;
+            case 3:
+                WalkToTarget(targetPosition[2], true);
+                sequenceNum++;
+                break;
+            case 4:
+                WalkToTarget(targetPosition[3], true);
+                sequenceNum++;
                 break;
             default:
                 Debug.LogWarning($"시퀀스 값 {sequenceNum}에 해당하는 행동이 없습니다!");
+                sequenceNum = 0;
+                Debug.LogWarning($"시퀀스 값이 0으로 돌아갑니다.");
                 break;
         }
     }
 
+    //한국어 행동
     void KoreanAct()
     {
         doIdleAct = false;
@@ -200,64 +252,107 @@ public class NPCScriptTemplete : MonoBehaviour
         switch (sequenceNum)
         {
             case 0:
-                Say("#pfp(0,5)#name(마리)안녕하세요.#endl()" +
-                    "저는, 오마리 AU에서 주인공을 맡고있는 써니 누나, 마리입니다.#endl()" +
-                    "#pfp(0,2)먼저, 저의 말과, 행동으로 인해 큰 피해를 끼치고, 실망을 드린 써니님, 친구분들께, 죄송합니다.#endl()" +
-                    "지금부터는");
+                Say("#pfp(1,1)#name(써니)안녕하세요.#endl()" +
+                    "저는, 오모리에서 주인공을 맡고있는 마리 동생, 써니 입니다.#endl()" +
+                    "#pfp(1,2)먼저, 저의 말과, 행동으로 인해 큰 피해를 끼치고, 실망을 드린 마리님, 친구분들께, 죄송합니다.", true);
                 sequenceNum++;
                 break;
             case 1:
-                Teleport(targetPosition[0]);
+                Say("#pfp(1,1)#name(써니)지금부터는", true);
                 sequenceNum++;
                 break;
             case 2:
-                MoveToTarget(targetPosition[1]);
+                WalkToTarget(targetPosition[1], true);
+                sequenceNum++;
+                break;
+            case 3:
+                stareAngle = -90f;
+                isWalking = false;
+                sequenceNum++;
+                break;
+            case 4:
+                StartCoroutine(Sleep(3, false)); // Sleep for 3 seconds
                 sequenceNum = 0;
                 CutSequence();
                 break;
             default:
                 Debug.LogWarning($"시퀀스 값 {sequenceNum}에 해당하는 행동이 없습니다!");
+                sequenceNum = 0;
+                Debug.LogWarning($"시퀀스 값이 0으로 돌아갑니다.");
                 break;
         }
     }
 
-
-    //시퀀스 끊기
+    // 시퀀스 끊기
     void CutSequence()
     {
         doIdleAct = true;
         progressSequence = false;
     }
 
-    //말하기
-    void Say(string dialogueLine)
+    // 말하기
+    void Say(string dialogueLine, bool stopAndStare)
     {
+        if (stopAndStare)
+        {
+            isWalking = false;
+            Vector3 directionToTarget = PlayerControl.instance.gameObject.transform.position - transform.position; // 타겟 방향 벡터 계산
+            stareAngle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg; // 각도 계산
+        }
+
         DialogueBoxScript.instance.GetInputMessage(dialogueLine);
         currentMode = processMode.say;
     }
 
-    //타겟으로 텔레포트
+    // 타겟으로 텔레포트
     void Teleport(Transform target)
     {
         transform.position = target.position;
-        Debug.Log($"NPC has been teleported to {target.position}");
     }
 
-    //타겟으로 움직임
-    void MoveToTarget(Transform target)
+    // 타겟으로 움직임
+    void MoveToTarget(Transform target, bool lockPlayerUntilFinish)
     {
         if (moveCoroutine != null)
         {
             StopCoroutine(moveCoroutine);
         }
         isMoving = true;
+
+        if (lockPlayerUntilFinish)
+        {
+            currentMode = processMode.move;
+        }
         moveCoroutine = StartCoroutine(MoveToTargetCoroutine(target));
     }
 
-    //타겟으로 움직이는 과정
+    void WalkToTarget(Transform target, bool lockPlayerUntilFinish)
+    {
+        isWalking = true;
+
+        // 이 오브젝트에서 target를 향하는 각도를 구해서 stareAngle에 적용
+        Vector3 directionToTarget = target.position - transform.position; // 타겟 방향 벡터 계산
+        stareAngle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg; // 각도 계산
+
+        if (moveCoroutine != null)
+        {
+            StopCoroutine(moveCoroutine);
+            isWalking = false;
+        }
+        isMoving = true;
+
+        if (lockPlayerUntilFinish)
+        {
+            currentMode = processMode.move;
+        }
+        moveCoroutine = StartCoroutine(MoveToTargetCoroutine(target));
+    }
+
+
+    // 타겟으로 움직이는 과정
     IEnumerator MoveToTargetCoroutine(Transform target)
     {
-        while (Vector2.Distance(transform.position, target.position) > 0.1f)
+        while (Vector2.Distance(transform.position, target.position) > 0.01f)
         {
             transform.position = Vector2.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
             yield return null;
@@ -265,6 +360,43 @@ public class NPCScriptTemplete : MonoBehaviour
         transform.position = target.position;
         isMoving = false;
         moveCoroutine = null;
-        Debug.Log("NPC has reached the target position");
+    }
+
+    // 잠자기
+    IEnumerator Sleep(float seconds, bool isIdleMove)
+    {
+        //슬립 걸기
+        if (isIdleMove) idleCurrentMode = processMode.sleep;
+        else currentMode = processMode.sleep;
+
+        //잠깐 정지하기
+        Debug.Log($"{seconds}초 동안 잠자기 기능중");
+        yield return new WaitForSeconds(seconds);
+        Debug.Log("끝");
+
+        //idleMove 에서 온 명령일 때 시퀀스 진행하기
+        if (!isIdleMove)
+        {
+            if (progressSequence)
+            {
+                ExecuteLocalizedAction();
+            }
+            else
+            {
+                PlayerControl.instance.LockPlayerControl = false;
+                progressSequence = true;
+            }
+        }
+
+        //슬립 풀기
+        if (isIdleMove)
+        {
+            idleCurrentMode = processMode.idle;
+            progressIdleSequence = true;
+        }
+        else
+        {
+            currentMode = processMode.idle;
+        }
     }
 }

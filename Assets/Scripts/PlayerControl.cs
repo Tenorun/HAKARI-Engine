@@ -8,8 +8,8 @@ public class PlayerControl : MonoBehaviour
     public static PlayerControl instance;
 
     public float moveSpeed; // 플레이어 움직임 속도
-    const float DEFAULT_MOVE_SPEED = 6f;    //걷기 속도
-    const float SPRINT_MOVE_SPEED = 13f;    //달리기 속도
+    const float DEFAULT_MOVE_SPEED = 3f;    //걷기 속도
+    const float SPRINT_MOVE_SPEED = 6f;    //달리기 속도
 
     private Rigidbody2D rb; // Reference to the Rigidbody2D component
     private Vector2 movement; // Variable to store movement direction
@@ -48,7 +48,7 @@ public class PlayerControl : MonoBehaviour
     void UpdateAnimation_PlayerControl()
     {
         anim.SetBool("is Moving", isMoving);
-        anim.SetFloat("Stare Angle", stareAngle);
+        anim.SetFloat("Stare Angle", stareAngle + 0.000001f);
     }
 
     private void Awake()
@@ -104,8 +104,15 @@ public class PlayerControl : MonoBehaviour
 
     void PerformRaycast()
     {
+        float raycastAngle = 0;
+
+        if(stareAngle <= 135 && stareAngle > 45) raycastAngle = 90;
+        else if (stareAngle <= 45 && stareAngle > -45) raycastAngle = 0;
+        else if (stareAngle <= -45 && stareAngle > -135) raycastAngle = -90;
+        else if (stareAngle <= -135 || stareAngle > 135 ) raycastAngle = 180;
+
         // Calculate the direction from the angle
-        Vector2 direction = new Vector2(Mathf.Cos(stareAngle * Mathf.Deg2Rad), Mathf.Sin(stareAngle * Mathf.Deg2Rad));
+        Vector2 direction = new Vector2(Mathf.Cos(raycastAngle * Mathf.Deg2Rad), Mathf.Sin(raycastAngle * Mathf.Deg2Rad));
 
         // Perform the raycast
         RaycastHit2D[] hit = Physics2D.RaycastAll(rb.position, direction, rayLength);
@@ -130,8 +137,15 @@ public class PlayerControl : MonoBehaviour
 
     void OnDrawGizmos()
     {
+        float raycastAngle = 0;
+
+        if (stareAngle <= 135 && stareAngle > 45) raycastAngle = 90;
+        else if (stareAngle <= 45 && stareAngle > -45) raycastAngle = 0;
+        else if (stareAngle <= -45 && stareAngle > -135) raycastAngle = -90;
+        else if (stareAngle <= -135 || stareAngle > 135) raycastAngle = 180;
+
         // Calculate the direction from the angle
-        Vector2 direction = new Vector2(Mathf.Cos(stareAngle * Mathf.Deg2Rad), Mathf.Sin(stareAngle * Mathf.Deg2Rad));
+        Vector2 direction = new Vector2(Mathf.Cos(raycastAngle * Mathf.Deg2Rad), Mathf.Sin(raycastAngle * Mathf.Deg2Rad));
 
         // Set the color of the gizmo
         Gizmos.color = Color.red;

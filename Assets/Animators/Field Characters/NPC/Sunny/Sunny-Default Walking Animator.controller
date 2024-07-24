@@ -352,7 +352,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mari_Idle_East
+  m_Name: Idle_East
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -370,7 +370,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 18ea74a683439b44e90768db79c4a538, type: 2}
+  m_Motion: {fileID: 7400000, guid: 3b4ae0fcecd2d474b8267667d708fc9b, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -383,7 +383,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mari_Idle_North
+  m_Name: Idle_North
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -401,7 +401,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 86c03bf8d8adb224b9b198bcd12d8267, type: 2}
+  m_Motion: {fileID: 7400000, guid: a6adc7cabab407743bd15a6ceef2cb55, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -414,7 +414,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mari_Idle_South
+  m_Name: Idle_South
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -432,7 +432,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 57c0e27dfa2fb924aa0fb4d68fc1951d, type: 2}
+  m_Motion: {fileID: 7400000, guid: 5c720f31010506143a63d031d7130895, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -619,7 +619,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mari_Walking_North
+  m_Name: Walking_North
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -637,7 +637,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: daefa01ff5451d94ea0193692e95f08d, type: 2}
+  m_Motion: {fileID: 7400000, guid: 115e3346d1370624a895232f9e3cb6d3, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -649,7 +649,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Player
+  m_Name: Sunny-Default Walking Animator
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: is Moving
@@ -768,7 +768,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mari_Walking_South
+  m_Name: Walking_South
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -786,7 +786,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: bd962d7c34ae29347bd0be673b4062a7, type: 2}
+  m_Motion: {fileID: 7400000, guid: a3e6872b103938e4291086b8ca3ef0e0, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -911,7 +911,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mari_Walking_West
+  m_Name: Walking_West
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -928,7 +928,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 189274ca9672f5e459cfd314ff3a73e1, type: 2}
+  m_Motion: {fileID: 7400000, guid: abd945189cf66cb438e46c368e61d227, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1178,22 +1178,22 @@ AnimatorStateMachine:
     m_Position: {x: 310, y: 490, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8844491159728924148}
-    m_Position: {x: 110, y: 290, z: 0}
+    m_Position: {x: 80, y: 300, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4906231929217453512}
-    m_Position: {x: 550, y: 260, z: 0}
+    m_Position: {x: 580, y: 280, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3691205786386631852}
-    m_Position: {x: 270, y: 190, z: 0}
+    m_Position: {x: 350, y: 190, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3674104692549141896}
     m_Position: {x: 340, y: 390, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3028071752554204178}
-    m_Position: {x: -210, y: 320, z: 0}
+    m_Position: {x: -180, y: 250, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6217703432840891076}
-    m_Position: {x: 800, y: 300, z: 0}
+    m_Position: {x: 880, y: 300, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1227112139673905365}
     m_Position: {x: 430, y: 30, z: 0}
@@ -1301,7 +1301,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mari_Walking_East
+  m_Name: Walking_East
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1319,7 +1319,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: be8f20aff39e0c0408791a9c597b7f63, type: 2}
+  m_Motion: {fileID: 7400000, guid: 8684a4733ed061144b4c1558ac8d500e, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1394,7 +1394,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mari_Idle_West
+  m_Name: Idle_West
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1411,7 +1411,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 3bac5a7c99c5fd54c944306b1f9fa868, type: 2}
+  m_Motion: {fileID: 7400000, guid: 337e24341f797584cbdd938d3e94356c, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

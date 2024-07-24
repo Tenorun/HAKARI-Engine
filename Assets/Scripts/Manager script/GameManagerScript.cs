@@ -12,6 +12,9 @@ public class GameManagerScript : MonoBehaviour
 
     void Awake()
     {
+        //프레임 수 제한
+        Application.targetFrameRate = 240;
+
         if (instance == null)
         {
             instance = this;

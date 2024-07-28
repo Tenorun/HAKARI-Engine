@@ -296,7 +296,7 @@ public class NPCScriptTemplate : MonoBehaviour
         if (stopAndStare)
         {
             isWalking = false;
-            Vector3 directionToTarget = PlayerControl.instance.gameObject.transform.position - transform.position; // 타겟 방향 벡터 계산
+            Vector2 directionToTarget = PlayerControl.instance.gameObject.transform.position - transform.position; // 타겟 방향 벡터 계산
             stareAngle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg; // 각도 계산
         }
 
@@ -331,7 +331,7 @@ public class NPCScriptTemplate : MonoBehaviour
         isWalking = true;
 
         // 이 오브젝트에서 target를 향하는 각도를 구해서 stareAngle에 적용
-        Vector3 directionToTarget = target.position - transform.position; // 타겟 방향 벡터 계산
+        Vector2 directionToTarget = target.position - transform.position; // 타겟 방향 벡터 계산
         stareAngle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg; // 각도 계산
 
         if (moveCoroutine != null)

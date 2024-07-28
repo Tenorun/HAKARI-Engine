@@ -20,7 +20,7 @@ public class PlayerControl : MonoBehaviour
 
     public bool LockPlayerControl = false;  //플레이어 컨트롤 잠금 여부
 
-    private float rayLength = 1f; // Length of the raycast
+    private float rayLength = 0.6f; // Length of the raycast
 
     public GameObject rayHitObject; //레이캐스트에 걸린 오브젝트
     public bool isSubmitPress = false;    //확인버튼 눌림 여부
@@ -35,8 +35,10 @@ public class PlayerControl : MonoBehaviour
         else moveSpeed = DEFAULT_MOVE_SPEED;
 
         //플레이어 움직이기
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+        float prevX = rb.position.x;
+        float prevY = rb.position.y;
 
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
         // 플레이어가 향하는 방향에 따라 stareAngle 값 바꾸기
         if (movement != Vector2.zero)
         {
@@ -92,7 +94,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    void LateUpdate()
     {
         if (!LockPlayerControl)
         {
@@ -115,14 +117,14 @@ public class PlayerControl : MonoBehaviour
         Vector2 direction = new Vector2(Mathf.Cos(raycastAngle * Mathf.Deg2Rad), Mathf.Sin(raycastAngle * Mathf.Deg2Rad));
 
         // Perform the raycast
-        RaycastHit2D[] hit = Physics2D.RaycastAll(rb.position, direction, rayLength);
+        RaycastHit2D[] hit = Physics2D.RaycastAll(new Vector2 (rb.position.x, rb.position.y), direction, rayLength);
 
         //레이가 무엇에 맞았는지에 따라 표시하기
-        if (hit.Length > 1)
+        if (hit.Length > 2)
         {
-            if (hit[1].collider != null && hit[1].collider != this.gameObject)
+            if (hit[2].collider != null && hit[2].collider != this.gameObject)
             {
-                rayHitObject = hit[1].collider.gameObject;
+                rayHitObject = hit[2].collider.gameObject;
             }
             else
             {
@@ -151,6 +153,6 @@ public class PlayerControl : MonoBehaviour
         Gizmos.color = Color.red;
 
         // Draw the ray
-        Gizmos.DrawRay(transform.position, direction * rayLength);
+        Gizmos.DrawRay(new Vector2(transform.position.x, transform.position.y), direction * rayLength);
     }
 }

@@ -557,7 +557,7 @@ GameObject:
   m_Component:
   - component: {fileID: 536204741}
   - component: {fileID: 536204742}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: SFX Manager
   m_TagString: Unhand Z
   m_Icon: {fileID: 0}
@@ -914,6 +914,17 @@ MonoBehaviour:
   isSubmitPress: 0
   isSubmitDown: 0
   isSubmitUp: 0
+  RayHits:
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
 --- !u!61 &712750510
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1146,6 +1157,7 @@ GameObject:
   - component: {fileID: 1215681884}
   - component: {fileID: 1215681885}
   - component: {fileID: 1215681886}
+  - component: {fileID: 1215681888}
   m_Layer: 0
   m_Name: NPC
   m_TagString: Untagged
@@ -1383,6 +1395,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 0.2}
   m_EdgeRadius: 0
+--- !u!114 &1215681888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1215681879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6e78d3a09ccc0940960af2e6ae7840b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 0}
+  stareAngle: -90
+  isWalking: 0
+  handleDefaultWalkAnim: 1
+  currentMode: 0
+  interectionLock: 0
 --- !u!1 &1237987018
 GameObject:
   m_ObjectHideFlags: 0
@@ -1551,7 +1581,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1475544791}
   - component: {fileID: 1475544792}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Portrait Image Manager
   m_TagString: Unhand Z
   m_Icon: {fileID: 0}
@@ -1806,7 +1836,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2093200936}
   - component: {fileID: 2093200937}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Game Manager
   m_TagString: Unhand Z
   m_Icon: {fileID: 0}

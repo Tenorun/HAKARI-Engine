@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
@@ -117,18 +118,22 @@ public class PlayerControl : MonoBehaviour
         Vector2 direction = new Vector2(Mathf.Cos(raycastAngle * Mathf.Deg2Rad), Mathf.Sin(raycastAngle * Mathf.Deg2Rad));
 
         // Perform the raycast
-        RaycastHit2D[] hit = Physics2D.RaycastAll(new Vector2 (rb.position.x, rb.position.y), direction, rayLength);
-
+        RaycastHit2D[] hitArr = Physics2D.RaycastAll(new Vector2(rb.position.x, rb.position.y), direction, rayLength);
+        
         //레이가 무엇에 맞았는지에 따라 표시하기
-        if (hit.Length > 2)
+        if (hitArr.Length > 0)
         {
-            if (hit[2].collider != null && hit[2].collider != this.gameObject)
+            for(int i = 0; i < hitArr.Length; i++)
             {
-                rayHitObject = hit[2].collider.gameObject;
-            }
-            else
-            {
-                rayHitObject = null;
+                if (hitArr[i].collider.gameObject != this.gameObject && hitArr[i].collider != null && hitArr[i].collider.gameObject != ZHandler.instance.gameObject)
+                {
+                    rayHitObject = hitArr[i].collider.gameObject;
+                    break;
+                }
+                else
+                {
+                    rayHitObject = null;
+                }
             }
         }
         else
